@@ -25,6 +25,7 @@ func main() {
 
 	w.RegisterWorkflow(helloworldmtls.Workflow)
 	w.RegisterActivity(helloworldmtls.Activity)
+	w.RegisterActivity(&helloworldmtls.PerfMetricsActivities{})
 
 	err = w.Run(worker.InterruptCh())
 	if err != nil {
