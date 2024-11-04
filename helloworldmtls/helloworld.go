@@ -20,12 +20,21 @@ func Workflow(ctx workflow.Context, name string) (string, error) {
 		StartToCloseTimeout: 10 * time.Second,
 	}
 	ctx = workflow.WithActivityOptions(ctx, ao)
+	ctx = workflow.WithLocalActivityOptions(ctx, workflow.LocalActivityOptions{
+		StartToCloseTimeout: 10 * time.Second,
+	})
 
 	logger := workflow.GetLogger(ctx)
 	logger.Info("HelloWorld workflow started", "name", name)
 
 	var result string
 	err := workflow.ExecuteActivity(ctx, Activity, name).Get(ctx, &result)
+
+	metricsErr := workflow.ExecuteLocalActivity(ctx, (*PerfMetricsActivities).RecordMetric, RecordMetricParams{Succeeded: err == nil}).Get(ctx, nil)
+	if metricsErr != nil {
+		logger.Warn(fmt.Errorf("failed to record performance metrics: %w", metricsErr).Error())
+	}
+
 	if err != nil {
 		logger.Error("Activity failed.", "Error", err)
 		return "", err
