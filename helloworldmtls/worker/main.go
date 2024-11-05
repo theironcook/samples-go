@@ -21,7 +21,10 @@ func main() {
 	}
 	defer c.Close()
 
-	w := worker.New(c, "hello-world-mtls", worker.Options{})
+	w := worker.New(c, "hello-world-mtls", worker.Options{
+		MaxConcurrentActivityTaskPollers: 50,
+		MaxConcurrentWorkflowTaskPollers: 50,
+	})
 
 	w.RegisterWorkflow(helloworldmtls.Workflow)
 	w.RegisterActivity(helloworldmtls.Activity)

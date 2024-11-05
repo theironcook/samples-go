@@ -6,6 +6,7 @@ import (
 	"log"
 	"os"
 	"sync"
+	"time"
 
 	"github.com/temporalio/samples-go/helloworldmtls"
 	"go.temporal.io/sdk/client"
@@ -29,8 +30,9 @@ func main() {
 
 		go func() {
 			workflowOptions := client.StartWorkflowOptions{
-				ID:        fmt.Sprintf("hello_world_workflowID-%d", i),
-				TaskQueue: "hello-world-mtls",
+				ID:         fmt.Sprintf("hello_world_workflowID-%d", i),
+				TaskQueue:  "hello-world-mtls",
+				StartDelay: time.Minute * 3,
 			}
 
 			we, err := c.ExecuteWorkflow(context.Background(), workflowOptions, helloworldmtls.Workflow, fmt.Sprintf("Temporal-%d", i))
@@ -51,7 +53,7 @@ func main() {
 		}()
 	}
 
-	log.Println("waiting for workflows to execute")
+	log.Println("waiting for workflows to execute...")
 	wg.Wait()
 	log.Println("all done.  check ./worker/log/perf_metrics for throughput results")
 }
