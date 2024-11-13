@@ -250,4 +250,3 @@ Mostly examples we haven't yet ported from https://github.com/temporalio/samples
 
 These are edge case examples useful for Temporal internal development and bug
 reporting. [See their readme for more details](./temporal-fixtures).
-test
